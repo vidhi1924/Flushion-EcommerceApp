@@ -53,8 +53,8 @@ class Category extends StatelessWidget {
   final String image_caption;
 
   Category({
-    this.image_location,
-    this.image_caption,
+    required this.image_location,
+    required this.image_caption,
   });
 
   @override

@@ -19,15 +19,15 @@ class _BrandListState extends State<BrandList> {
         ),
       ),
       body: StreamBuilder(
-        stream: Firestore.instance.collection('brands').snapshots(),
+        stream: FirebaseFirestore.instance.collection('brands').snapshots(),
         builder: (context, snapshot) {
           if(!snapshot.hasData){
             return Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.red)));}
           else{
           return ListView.builder(
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, index) {
-              DocumentSnapshot categories = snapshot.data.documents[index];
+              DocumentSnapshot categories = snapshot.data!.docs[index];
               return ListTile(
                 leading: Icon(Icons.category),
                 title: Text(categories['brand']),

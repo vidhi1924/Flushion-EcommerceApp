@@ -1,6 +1,5 @@
 import 'package:ecommerce/main.dart';
 import 'package:flutter/material.dart';
-import 'package:ecommerce/ui/login.dart';
 import 'package:ecommerce/utils/firebase_auth.dart';
 
 class SignUp extends StatefulWidget {
@@ -9,10 +8,10 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  TextEditingController _nameController;
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
-  TextEditingController _confirmPasswordController;
+  late TextEditingController _nameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
@@ -144,7 +143,7 @@ class _SignUpState extends State<SignUp> {
                                   fontSize: 20.0),
                             ),
                             onPressed: () async {
-                              bool res = await AuthProvider().signUp(_emailController.text, _passwordController.text);
+                              bool res = await AuthProvider().signUp(_emailController.text, _passwordController.text, _nameController.text);
                               print(res);
                               if (res){
                                 // print("true");
@@ -207,7 +206,7 @@ class _SignUpState extends State<SignUp> {
                           borderRadius: BorderRadius.circular(10.0),
                           color: Colors.redAccent,
                           elevation: 0.0,
-                          child: FlatButton(
+                          child: TextButton(
                             onPressed: () {
                               // Navigator.push(
                               //     context,

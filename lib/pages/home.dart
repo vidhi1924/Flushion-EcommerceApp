@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:flutter/material.dart';
-import 'package:carousel_pro/carousel_pro.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 // my own imports
 import 'package:ecommerce/components/horizontal_listview.dart';
 import 'package:ecommerce/components/products.dart';
-import 'package:ecommerce/pages/cart.dart';
 import 'package:ecommerce/utils/firebase_auth.dart';
 import 'package:ecommerce/admin/admin.dart';
+import 'package:ecommerce/pages/about.dart';
+import 'package:ecommerce/pages/my_account.dart';
+import 'package:ecommerce/pages/my_orders.dart';
+import 'package:ecommerce/pages/settings.dart';
 import 'package:ecommerce/pages/updatedcart.dart';
 import 'package:ecommerce/pages/favourites.dart';
 
@@ -29,24 +33,25 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
   Widget image_carousel = new Container(
     height: 200.0,
-    child: new Carousel(
-      boxFit: BoxFit.cover,
-      images: [
-        AssetImage('images/c1.jpg'),
-        AssetImage('images/m1.jpeg'),
-        AssetImage('images/w3.jpeg'),
-        AssetImage('images/w4.jpeg'),
-        AssetImage('images/m2.jpg'),
-      ],
-      autoplay: true,
-      animationCurve: Curves.fastOutSlowIn,
-      animationDuration: Duration(milliseconds: 1000),
-      dotSize: 4.0,
-      indicatorBgPadding: 10.0,
-      dotBgColor: Colors.transparent,
-      dotColor: Colors.white70,
+    child: CarouselSlider(
+      options: CarouselOptions(
+        height: 200.0,
+        autoPlay: true,
+        viewportFraction: 1.0,
+        autoPlayCurve: Curves.fastOutSlowIn,
+        autoPlayAnimationDuration: Duration(milliseconds: 1000),
+      ),
+      items: [
+        'images/c1.jpg',
+        'images/m1.jpeg',
+        'images/w3.jpeg',
+        'images/w4.jpeg',
+        'images/m2.jpg',
+      ].map((path) {
+        return Image.asset(path, fit: BoxFit.cover, width: double.infinity);
+      }).toList(),
     ),
-  );  
+  );
     return Scaffold(
       appBar: new AppBar(
         elevation: 0.1,
@@ -80,8 +85,10 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
 //            header
             new UserAccountsDrawerHeader(
-                accountName: Text('Vidhi Shah'),
-                accountEmail: Text('vidhi19@somaiya.edu'),
+                accountName: Text(
+                    FirebaseAuth.instance.currentUser?.displayName ?? ''),
+                accountEmail: Text(
+                    FirebaseAuth.instance.currentUser?.email ?? ''),
                 currentAccountPicture: GestureDetector(
                   child: new CircleAvatar(
                     backgroundColor: Colors.grey,
@@ -95,7 +102,9 @@ class _HomePageState extends State<HomePage> {
 //                body
           InkWell(
             onTap: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+              // Already on the home page underneath this drawer, so just
+              // close it instead of pushing a redundant new instance.
+              Navigator.pop(context);
             },
             child: ListTile(
               title: Text('Home Page'),
@@ -104,7 +113,9 @@ class _HomePageState extends State<HomePage> {
           ),
           
           InkWell(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyAccountPage()));
+            },
             child: ListTile(
               title: Text('My account'),
               leading: Icon(Icons.person, color: Colors.red,),
@@ -112,7 +123,9 @@ class _HomePageState extends State<HomePage> {
           ),
 
           InkWell(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyOrdersPage()));
+            },
             child: ListTile(
               title: Text('My orders'),
               leading: Icon(Icons.shopping_basket, color: Colors.red,),
@@ -143,8 +156,10 @@ class _HomePageState extends State<HomePage> {
           Divider(),
 
           InkWell(
-            onTap: (){
-              AuthProvider().logOut();
+            onTap: () async {
+              await AuthProvider().logOut();
+              Fluttertoast.showToast(
+                  msg: "Logged out", backgroundColor: Colors.black54);
             },
             child: ListTile(
               title: Text('Log Out'),
@@ -153,7 +168,9 @@ class _HomePageState extends State<HomePage> {
           ),
 
           InkWell(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => SettingsPage()));
+            },
             child: ListTile(
               title: Text('Settings'),
               leading: Icon(Icons.settings, /*color: Colors.blue,*/),
@@ -161,7 +178,9 @@ class _HomePageState extends State<HomePage> {
           ),
 
           InkWell(
-            onTap: (){},
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
+            },
             child: ListTile(
               title: Text('About'),
               leading: Icon(Icons.help, /*color: Colors.green,*/),
@@ -169,10 +188,8 @@ class _HomePageState extends State<HomePage> {
           ),
 
           InkWell(
-            onTap: ()async{
-              bool res = await AuthProvider().getCurrentUserEmail();
-              if(res){
-                showDialog(context: context,
+            onTap: (){
+              showDialog(context: context,
                     builder: (context){
                       return new AlertDialog(
                         title: new Text("Security Key"),
@@ -211,8 +228,6 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     );
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>Admin()));
-              }
             },
             child: ListTile(
               title: Text('Admin'),

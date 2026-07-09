@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'product_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide AuthProvider;
 import 'package:ecommerce/pages/home.dart';
 
 class FavouriteList extends StatefulWidget {
@@ -19,7 +20,10 @@ class _FavouriteListState extends State<FavouriteList> {
           title: Text("Your Favourites"),
         ),
         body: StreamBuilder(
-            stream: Firestore.instance.collection('favourites').snapshots(),
+            stream: FirebaseFirestore.instance
+                .collection('favourites')
+                .where('userId', isEqualTo: FirebaseAuth.instance.currentUser?.uid)
+                .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator(
@@ -27,12 +31,12 @@ class _FavouriteListState extends State<FavouriteList> {
                 ));
               } else {
                 return GridView.builder(
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: snapshot.data!.docs.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot products =
-                          snapshot.data.documents[index];
+                          snapshot.data!.docs[index];
                       return Single_prod(
                           prod_name: products['name'],
                           prod_picture: products['images'],
@@ -93,7 +97,7 @@ class Single_prod extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: Hero(
-      tag: new Text("hero 1"),
+      tag: Text("hero 1 $prod_id"),
       child: Material(
         child: InkWell(
             onTap: () => Navigator.of(context).push(new MaterialPageRoute(
@@ -115,9 +119,9 @@ class Single_prod extends StatelessWidget {
                       color: Colors.black,
                     ),
                     onPressed: () async {
-                      Firestore.instance
+                      FirebaseFirestore.instance
                           .collection('favourites')
-                          .document(prod_id)
+                          .doc(prod_id)
                           .delete();
                       Fluttertoast.showToast(
                         gravity: ToastGravity.CENTER,

@@ -1,10 +1,16 @@
+import 'package:ecommerce/firebase_options.dart';
 import 'package:ecommerce/pages/home.dart';
 import 'package:ecommerce/ui/login.dart';
 import 'package:ecommerce/ui/splash.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
@@ -26,17 +32,14 @@ class MyApp extends StatelessWidget {
 class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseAuth.instance.onAuthStateChanged,
-      builder: (context,AsyncSnapshot<FirebaseUser> snapshot){
-        if(snapshot.connectionState == ConnectionState.waiting)
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting)
           return SplashPage();
-        if(!snapshot.hasData ||snapshot.data == null)
-          return LoginPage();
+        if (!snapshot.hasData || snapshot.data == null) return LoginPage();
         return HomePage();
       },
-      
     );
   }
 }
-

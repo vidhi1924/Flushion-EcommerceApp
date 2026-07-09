@@ -44,7 +44,7 @@ class _AdminState extends State<Admin> {
         title: Row(
           children: <Widget>[
             Expanded(
-                child: FlatButton.icon(
+                child: TextButton.icon(
                     onPressed: () {
                       setState(() => _selectedPage = Page.dashboard);
                     },
@@ -55,7 +55,7 @@ class _AdminState extends State<Admin> {
                     ),
                     label: Text('Dashboard'))),
             Expanded(
-                child: FlatButton.icon(
+                child: TextButton.icon(
                     onPressed: () {
                       setState(() => _selectedPage = Page.manage);
                     },
@@ -79,7 +79,7 @@ class _AdminState extends State<Admin> {
         return Column(
           children: <Widget>[
             ListTile(
-              subtitle: FlatButton.icon(
+              subtitle: TextButton.icon(
                 onPressed: null,
                 icon: Icon(
                   Icons.attach_money,
@@ -105,7 +105,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(18.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.people_outline),
                               label: Text("Brands")),
@@ -120,7 +120,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(12.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.category),
                               label: Text("Categories")),
@@ -135,7 +135,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(22.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.track_changes),
                               label: Text("Producs")),
@@ -150,7 +150,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(22.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.tag_faces),
                               label: Text("Sold")),
@@ -165,7 +165,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(22.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.shopping_cart),
                               label: Text("Orders")),
@@ -180,7 +180,7 @@ class _AdminState extends State<Admin> {
                     padding: const EdgeInsets.all(22.0),
                     child: Card(
                       child: ListTile(
-                          title: FlatButton.icon(
+                          title: TextButton.icon(
                               onPressed: null,
                               icon: Icon(Icons.close),
                               label: Text("Return")),
@@ -196,7 +196,6 @@ class _AdminState extends State<Admin> {
             ),
           ],
         );
-        break;
       case Page.manage:
         return ListView(
           children: <Widget>[
@@ -250,9 +249,6 @@ class _AdminState extends State<Admin> {
                             Divider(),
                           ],
                         );
-                        break;
-                      default:
-                        return Container();
                     }
                   }
                 
@@ -263,9 +259,10 @@ class _AdminState extends State<Admin> {
                         child: TextFormField(
                           controller: categoryController,
                           validator: (value){
-                            if(value.isEmpty){
+                            if(value == null || value.isEmpty){
                               return 'Category cannot be empty';
                             }
+                            return null;
                           },
                           decoration: InputDecoration(
                             hintText: "Add Category"
@@ -273,7 +270,7 @@ class _AdminState extends State<Admin> {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(onPressed: () {
+                        TextButton(onPressed: () {
                           if(categoryController.text != null){
                             _categoryService.createCategory(categoryController.text);
                           }
@@ -281,7 +278,7 @@ class _AdminState extends State<Admin> {
                           backgroundColor: Colors.black54);
                           Navigator.pop(context);
                         },child: Text('Add')),
-                        FlatButton(onPressed: () {
+                        TextButton(onPressed: () {
                           Navigator.pop(context);
                         },child: Text('Cancel'))
                       ],
@@ -296,9 +293,10 @@ class _AdminState extends State<Admin> {
                         child: TextFormField(
                           controller: brandController,
                           validator: (value){
-                            if(value.isEmpty){
+                            if(value == null || value.isEmpty){
                               return 'Category cannot be empty';
                             }
+                            return null;
                           },
                           decoration: InputDecoration(
                             hintText: "Add Brand"
@@ -306,7 +304,7 @@ class _AdminState extends State<Admin> {
                         ),
                       ),
                       actions: <Widget>[
-                        FlatButton(onPressed: () {
+                        TextButton(onPressed: () {
                           if(brandController.text != null){
                             _brandService.createBrand(brandController.text);
                           }
@@ -314,7 +312,7 @@ class _AdminState extends State<Admin> {
                           backgroundColor: Colors.black54);
                           Navigator.pop(context);
                         },child: Text('Add')),
-                        FlatButton(onPressed: () {
+                        TextButton(onPressed: () {
                           Navigator.pop(context);
                         },child: Text('Cancel'))
                       ],
@@ -324,24 +322,24 @@ class _AdminState extends State<Admin> {
 
   void getinfo() async {
     var productinfo =
-        await Firestore.instance.collection('newproducts').getDocuments();
+        await FirebaseFirestore.instance.collection('newproducts').get();
     print(productinfo);
     setState(() {
-      print(productinfo.documents.length);
-      productcount = productinfo.documents.length;
+      print(productinfo.docs.length);
+      productcount = productinfo.docs.length;
     });
     var categoryinfo =
-        await Firestore.instance.collection('categories').getDocuments();
+        await FirebaseFirestore.instance.collection('categories').get();
     setState(() {
-      print(categoryinfo.documents.length);
-      categorycount = categoryinfo.documents.length;
+      print(categoryinfo.docs.length);
+      categorycount = categoryinfo.docs.length;
     });
 
     var brandinfo =
-        await Firestore.instance.collection('brands').getDocuments();
+        await FirebaseFirestore.instance.collection('brands').get();
     setState(() {
-      print(brandinfo.documents.length);
-      brandcount = brandinfo.documents.length;
+      print(brandinfo.docs.length);
+      brandcount = brandinfo.docs.length;
     });
   }
 }

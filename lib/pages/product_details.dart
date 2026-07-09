@@ -1,4 +1,3 @@
-import 'package:ecommerce/ui/login.dart';
 import 'package:ecommerce/utils/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ecommerce/pages/home.dart';
@@ -219,8 +218,9 @@ class _ProductDetailsState extends State<ProductDetails> {
 //            ================== the size button ====================
               Expanded(
                 child: MaterialButton(
-                  onPressed: () {
-                      _productService.uploadToCart(
+                  onPressed: () async {
+                      await _productService.uploadToCart(
+                      productId: widget.product_detail_id.toString(),
                       productName: widget.product_detail_name,
                       price: widget.product_detail_new_price,
                       images: widget.product_detail_picture,
@@ -248,8 +248,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => new UpdatedCart()));
               }),
 
-              new IconButton(icon: Icon(Icons.favorite_border), color: Colors.red, onPressed: (){
-                      _productService.addToFavourites(
+              new IconButton(icon: Icon(Icons.favorite_border), color: Colors.red, onPressed: () async {
+                      await _productService.addToFavourites(
+                        productId: widget.product_detail_id.toString(),
                         productName: widget.product_detail_name,
                         price: widget.product_detail_new_price,
                         images: widget.product_detail_picture,
@@ -334,16 +335,16 @@ class _SimilarProductsState extends State<SimilarProducts> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: StreamBuilder(
-            stream: Firestore.instance.collection('newproducts').snapshots(),
+            stream: FirebaseFirestore.instance.collection('newproducts').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return GridView.builder(
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: snapshot.data!.docs.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot products =
-                          snapshot.data.documents[index];
+                          snapshot.data!.docs[index];
                       return Single_prod(
                         prod_name: products['name'],
                         prod_picture: products['images'],

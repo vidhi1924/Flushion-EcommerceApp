@@ -1,8 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ecommerce/utils/firebase_auth.dart';
-// import 'package:flutterfireauth/utils/firebase_auth.dart';
+import 'package:ecommerce/utils/google_signin_button.dart';
 import 'package:ecommerce/ui/signup.dart';
 
 class LoginPage extends StatefulWidget {
@@ -11,14 +11,17 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _emailController;
-  TextEditingController _passwordController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController(text: "");
     _passwordController = TextEditingController(text: "");
+    // Registers the web sign-in listener before the rendered Google button
+    // (built below) can be clicked.
+    AuthProvider();
   }
 
   @override
@@ -109,11 +112,8 @@ class _LoginPageState extends State<LoginPage> {
                             print("Email and Password cannot be empty");
                             return;
                           }
-                          print(_emailController.text);
-                          print(_passwordController.text);
                           bool res = await AuthProvider().signInWithEmail(
                               _emailController.text, _passwordController.text);
-                          print(res);
                           // if(res){
                           //   Fluttertoast.showToast(
                           //       msg: "Invalid Email or Password",
@@ -197,21 +197,26 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new Material(
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.redAccent,
-                      elevation: 0.0,
-                      child: FlatButton(
-                        onPressed: () async {
-                          bool res = await AuthProvider().loginWithGoogle();
-                          if (!res) print("Error logging in with google");
-                        },
-                        child: Text(
-                          "Sign In with Google",
-                          style: TextStyle(color: Colors.white, fontSize: 18.0),
-                        ),
-                      ),
-                    ),
+                    child: kIsWeb
+                        ? Center(child: renderGoogleSignInButton())
+                        : Material(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.redAccent,
+                            elevation: 0.0,
+                            child: TextButton(
+                              onPressed: () async {
+                                bool res =
+                                    await AuthProvider().loginWithGoogle();
+                                if (!res)
+                                  print("Error logging in with google");
+                              },
+                              child: Text(
+                                "Sign In with Google",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 18.0),
+                              ),
+                            ),
+                          ),
                   )
                 ],
               ),

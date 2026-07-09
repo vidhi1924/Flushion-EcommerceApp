@@ -18,12 +18,12 @@ class _ProductListState extends State<ProductList> {
         ),
       ),
       body: StreamBuilder(
-        stream: Firestore.instance.collection('newproducts').snapshots(),
+        stream: FirebaseFirestore.instance.collection('newproducts').snapshots(),
         builder: (context, snapshot) {
           return ListView.builder(
-            itemCount: snapshot.data.documents.length,
+            itemCount: snapshot.data?.docs.length ?? 0,
             itemBuilder: (context, index) {
-              DocumentSnapshot products = snapshot.data.documents[index];
+              DocumentSnapshot products = snapshot.data!.docs[index];
               return Padding(
                   padding: const EdgeInsets.fromLTRB(0, 2, 0, 2),
                   child: Container(

@@ -12,16 +12,16 @@ class _ProductsState extends State<Products> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: StreamBuilder(
-            stream: Firestore.instance.collection('newproducts').snapshots(),
+            stream: FirebaseFirestore.instance.collection('newproducts').snapshots(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return GridView.builder(
-                    itemCount: snapshot.data.documents.length,
+                    itemCount: snapshot.data!.docs.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2),
                     itemBuilder: (BuildContext context, int index) {
                       DocumentSnapshot products =
-                          snapshot.data.documents[index];
+                          snapshot.data!.docs[index];
                       return Single_prod(
                         prod_name: products['name'],
                         prod_picture: products['images'],
