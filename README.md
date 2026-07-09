@@ -66,3 +66,8 @@ My Orders → My Account → Favourites → Settings → About → Admin → log
 
 See [docs/MIGRATION.md](docs/MIGRATION.md) for the full story of what it
 took to get from a 6-year-old, dead-Firebase-project state to this.
+
+## Medium Articles
+
+- [I let AI resurrect my dead 6-year-old Flutter app — here’s what actually broke] (https://medium.com/@shahvidhijayesh/i-let-ai-resurrect-my-dead-6-year-old-flutter-app-heres-what-actually-broke-b131c6253f2f)
+- [Reviving a 6-year-old Flutter app: the technical play-by-play] (https://medium.com/@shahvidhijayesh/reviving-a-6-year-old-flutter-app-the-technical-play-by-play-ed5b9aa472cc)
